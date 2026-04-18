@@ -42,4 +42,4 @@ echo "  Press Ctrl+C to stop."
 echo "══════════════════════════════════════════════════════════"
 echo ""
 
-"$STREAMLIT" run app.py --server.headless false --browser.gatherUsageStats false
+"$STREAMLIT" run app.py

@@ -1,0 +1,107 @@
+scenarios:
+  - name: "SMB-First Launch"
+    description: "Optimize for small teams, fast time to market, minimal infrastructure"
+    parameters:
+      - key: scale_target
+        original_value: "10,000 flags per org"
+        new_value: "500 flags per org"
+        rationale: "SMB customers rarely need high volume; reduces storage complexity"
+        dimension: "scale"
+      - key: auth_model
+        original_value: "SSO + RBAC"
+        new_value: "Email/password + simple admin role"
+        rationale: "SMBs don't have IdP infrastructure"
+        dimension: "security"
+      - key: audit_log_retention
+        original_value: "2 years"
+        new_value: "90 days"
+        rationale: "No compliance requirements at SMB tier"
+        dimension: "compliance"
+      - key: environments
+        original_value: "development, staging, production"
+        new_value: "production only"
+        rationale: "SMB teams often deploy directly to production; multi-env adds friction without clear benefit"
+        dimension: "architecture"
+      - key: sdk_languages
+        original_value: "JavaScript, Python, Ruby"
+        new_value: "JavaScript only"
+        rationale: "SMB web teams are overwhelmingly JS; Python and Ruby add maintenance cost for low demand"
+        dimension: "architecture"
+      - key: pricing_model
+        original_value: "Usage-based per seat"
+        new_value: "Free tier + flat $29/mo paid tier"
+        rationale: "SMB buyers need a predictable bill; usage-based pricing is a sales friction point at this tier"
+        dimension: "budget"
+
+  - name: "Enterprise-Ready"
+    description: "Full enterprise feature set, compliance-grade audit trail, SSO"
+    parameters:
+      - key: scale_target
+        original_value: "10,000 flags per org"
+        new_value: "100,000 flags per org"
+        rationale: "Enterprise orgs have many teams and microservices each with their own flag namespaces"
+        dimension: "scale"
+      - key: auth_model
+        original_value: "Email/password + simple admin role"
+        new_value: "SAML 2.0 SSO + fine-grained RBAC (Owner, Editor, Viewer, per-env)"
+        rationale: "Enterprise IT requires SSO for provisioning and centralized access control"
+        dimension: "security"
+      - key: audit_log_retention
+        original_value: "90 days"
+        new_value: "7 years"
+        rationale: "SOC2 Type II requires 1 year; HIPAA-adjacent customers need 6 years; 7 years provides margin"
+        dimension: "compliance"
+      - key: environments
+        original_value: "production only"
+        new_value: "Unlimited named environments with promotion workflows and approval gates"
+        rationale: "Enterprise teams require staging, pre-prod, canary, and regional environment segregation"
+        dimension: "architecture"
+      - key: sdk_languages
+        original_value: "JavaScript only"
+        new_value: "JavaScript, TypeScript, Python, Go, Java, Ruby, .NET, iOS (Swift), Android (Kotlin)"
+        rationale: "Enterprise orgs run polyglot stacks; SDK gaps are blockers for adoption by individual teams"
+        dimension: "architecture"
+      - key: uptime_sla
+        original_value: "Best effort"
+        new_value: "99.99% uptime SLA with credits"
+        rationale: "Enterprise contracts require contractual SLA; flag evaluation is in the critical path"
+        dimension: "scale"
+      - key: data_residency
+        original_value: "US only"
+        new_value: "US + EU (data residency controls per org)"
+        rationale: "GDPR compliance for European enterprise customers; required for EU deals"
+        dimension: "compliance"
+
+  - name: "API-First Platform"
+    description: "Prioritize developer API and SDK, minimal UI"
+    parameters:
+      - key: primary_interface
+        original_value: "Web dashboard"
+        new_value: "REST API + CLI"
+        rationale: "Developer-centric orgs prefer programmatic control; UI is secondary tooling"
+        dimension: "architecture"
+      - key: sdk_support
+        original_value: "JavaScript only"
+        new_value: "JavaScript, Python, Go, Java, Ruby"
+        rationale: "API-first customers use diverse stacks; SDK coverage is the primary adoption driver"
+        dimension: "architecture"
+      - key: webhook_support
+        original_value: "Not required"
+        new_value: "Required: flag change webhooks to CI/CD systems (GitHub Actions, CircleCI, Argo)"
+        rationale: "API-first teams integrate flag changes into deployment pipelines, not manual dashboards"
+        dimension: "architecture"
+      - key: terraform_provider
+        original_value: "Not planned"
+        new_value: "Official Terraform provider for flag-as-code"
+        rationale: "Infrastructure-as-code teams expect all configuration to be declaratively manageable"
+        dimension: "architecture"
+      - key: openapi_spec
+        original_value: "Internal documentation only"
+        new_value: "Published OpenAPI 3.1 spec with SDK auto-generation"
+        rationale: "Community SDKs and integrations are built on published specs; drives ecosystem adoption"
+        dimension: "architecture"
+      - key: ui_investment
+        original_value: "Full-featured web dashboard"
+        new_value: "Minimal read-only web UI; write operations via API/CLI only"
+        rationale: "Reduces frontend engineering cost; aligns with developer audience expectations"
+        dimension: "budget"

@@ -1,0 +1,117 @@
+scenarios:
+  - name: "Minimal Viable SSO"
+    description: "SAML 2.0 only, no OIDC, basic role mapping — fastest path to unblocking enterprise deals"
+    parameters:
+      - key: protocol_support
+        original_value: "SAML 2.0 + OIDC"
+        new_value: "SAML 2.0 only"
+        rationale: "SAML covers 80%+ of enterprise IdP deployments (Okta, Azure AD, Ping); OIDC can follow in v1.1 without blocking deals"
+        dimension: "architecture"
+      - key: role_mapping
+        original_value: "Fine-grained RBAC driven by IdP group attributes"
+        new_value: "Binary mapping: IdP group 'admins' → Admin role; all others → Member"
+        rationale: "Full attribute-driven RBAC requires customer IdP configuration expertise; simple mapping ships faster and handles 90% of cases"
+        dimension: "security"
+      - key: user_provisioning
+        original_value: "JIT provisioning + SCIM 2.0 deprovisioning"
+        new_value: "JIT provisioning only (no deprovisioning automation)"
+        rationale: "SCIM is a separate protocol requiring significant API surface; JIT covers onboarding; manual offboarding is acceptable for v1"
+        dimension: "architecture"
+      - key: session_management
+        original_value: "IdP session binding with Single Logout (SLO)"
+        new_value: "Independent Fathom session (8-hour expiry, no SLO)"
+        rationale: "SLO implementation is complex and error-prone across IdPs; separate session lifetime is acceptable for MVP"
+        dimension: "security"
+      - key: multi_idp_per_org
+        original_value: "Up to 3 IdPs per organization"
+        new_value: "Single IdP per organization"
+        rationale: "Multiple IdPs are required for M&A scenarios but add significant configuration UI complexity; single IdP covers 95% of customers"
+        dimension: "architecture"
+      - key: implementation_timeline
+        original_value: "12 weeks"
+        new_value: "5 weeks"
+        rationale: "Narrowed scope (SAML only, no SCIM, no SLO) cuts implementation time by more than half"
+        dimension: "budget"
+      - key: certificate_rotation
+        original_value: "Automated certificate rotation with 30-day advance notice"
+        new_value: "Manual certificate rotation, customer-initiated via admin UI"
+        rationale: "Automated rotation requires background job infrastructure and customer webhook reliability; manual process is standard practice at this tier"
+        dimension: "architecture"
+
+  - name: "Full Identity Platform"
+    description: "SAML + OIDC + SCIM 2.0 provisioning + JIT user creation — complete enterprise identity lifecycle"
+    parameters:
+      - key: protocol_support
+        original_value: "SAML 2.0 only"
+        new_value: "SAML 2.0 + OIDC Authorization Code + PKCE"
+        rationale: "Cloud-native IdPs (Auth0, Cognito, Keycloak) and modern enterprise tooling prefer OIDC; supporting both maximizes buyer compatibility"
+        dimension: "architecture"
+      - key: user_provisioning
+        original_value: "JIT provisioning only"
+        new_value: "JIT provisioning on first login + SCIM 2.0 for automated provisioning, deprovisioning, and group sync"
+        rationale: "Enterprise IT requires automated deprovisioning for access control; SCIM is the industry standard and expected by Okta/Azure AD enterprise packages"
+        dimension: "architecture"
+      - key: role_mapping
+        original_value: "Binary admin/member mapping"
+        new_value: "Attribute-driven RBAC: IdP groups map to Fathom roles; custom attribute mapping configurable per org"
+        rationale: "Enterprise orgs have established group structures in their IdP; manual role assignment at scale is an IT operational burden"
+        dimension: "security"
+      - key: session_management
+        original_value: "Independent Fathom session (8-hour expiry)"
+        new_value: "IdP session binding: Fathom session expires when IdP session expires; SLO propagated via SAML front-channel and OIDC backchannel logout"
+        rationale: "Enterprise security policies require centralized session termination for offboarding and security incidents"
+        dimension: "security"
+      - key: audit_trail
+        original_value: "Basic SSO event logging (login, login failure)"
+        new_value: "Full identity event log: login, logout, provision, deprovision, role change, SSO config change — exportable, 7-year retention"
+        rationale: "SOC2 Type II, HIPAA, and enterprise security audits require comprehensive identity event trails"
+        dimension: "compliance"
+      - key: multi_idp_per_org
+        original_value: "Single IdP per organization"
+        new_value: "Up to 5 IdPs per organization with priority ordering and domain routing"
+        rationale: "Post-acquisition scenarios and contractor populations often require separate IdPs within a single org"
+        dimension: "architecture"
+      - key: implementation_timeline
+        original_value: "5 weeks"
+        new_value: "20 weeks (SCIM alone is 6–8 weeks)"
+        rationale: "Full SCIM implementation, SLO, OIDC backchannel logout, and multi-IdP routing each add meaningful engineering scope"
+        dimension: "budget"
+
+  - name: "Zero-Trust Architecture"
+    description: "SSO + device trust verification + conditional access policies — for security-first enterprise buyers"
+    parameters:
+      - key: protocol_support
+        original_value: "SAML 2.0 only"
+        new_value: "SAML 2.0 + OIDC + device attestation via Okta Device Trust or Microsoft Intune"
+        rationale: "Zero-trust requires identity + device posture; device trust assertions are delivered through SSO protocol extensions"
+        dimension: "security"
+      - key: conditional_access
+        original_value: "No conditional access"
+        new_value: "Conditional access policies: block unmanaged devices, enforce MFA step-up for sensitive actions, allow/deny by IP range or country"
+        rationale: "Zero-trust security posture requires per-request access evaluation, not just initial authentication"
+        dimension: "security"
+      - key: session_management
+        original_value: "Independent Fathom session (8-hour expiry)"
+        new_value: "Continuous device and identity re-evaluation: short-lived sessions (1 hour), silent re-auth via OIDC refresh, terminate on device posture change"
+        rationale: "Zero-trust model requires ongoing verification, not just point-in-time authentication"
+        dimension: "security"
+      - key: api_auth_model
+        original_value: "Long-lived API tokens (90-day expiry)"
+        new_value: "Short-lived JWT access tokens (15-min expiry) + refresh token rotation; machine-to-machine via mTLS client certificates"
+        rationale: "Long-lived tokens are incompatible with zero-trust; credential compromise must have limited blast radius"
+        dimension: "security"
+      - key: data_access_controls
+        original_value: "Role-based access to all org data"
+        new_value: "Attribute-based access control (ABAC): access decisions based on user attributes, resource sensitivity tags, device posture, and time of day"
+        rationale: "Zero-trust mandates fine-grained access based on context, not just role membership"
+        dimension: "security"
+      - key: audit_and_siem_integration
+        original_value: "Basic event log, manual export"
+        new_value: "Real-time SIEM integration via Splunk/Datadog/Sentinel webhooks; structured event schema; tamper-evident log chain"
+        rationale: "Zero-trust security requires real-time threat detection; SIEM integration is non-negotiable for security-focused buyers"
+        dimension: "compliance"
+      - key: implementation_timeline
+        original_value: "5 weeks"
+        new_value: "32 weeks (device trust integration alone requires IdP-specific certification work)"
+        rationale: "Conditional access, ABAC, device trust, and SIEM integration each require deep integration with customer IdP ecosystems; certification and testing multiply timeline"
+        dimension: "budget"

@@ -39,17 +39,42 @@ Writing a spec is easy. Knowing which version of the spec to commit to is hard. 
 
 ## Getting Started
 
+### One command to run everything
+
 ```bash
 git clone https://github.com/smithar106/spec-sandbox
 cd spec-sandbox
 bash run.sh
 ```
 
-That's it. `run.sh` will:
-1. Create a Python virtual environment
-2. Install all dependencies
-3. Run the full pipeline against the sample spec using a mock LLM (~5 seconds, no API key needed)
-4. Open the Streamlit visualization at **http://localhost:8501**
+`run.sh` handles everything automatically:
+
+1. Creates a Python virtual environment
+2. Installs all dependencies
+3. Runs the full pipeline against the included sample spec using a **mock LLM** (~5 seconds, no API key needed)
+4. Launches a **Streamlit dashboard at [http://localhost:8501](http://localhost:8501)**
+
+> **Requirements:** Python 3.11+ · No API key needed for the mock run
+
+---
+
+## Streamlit Dashboard
+
+The dashboard has four pages, accessible from the left sidebar:
+
+| Page | What you see |
+|---|---|
+| **Overview** | Spec summary, branches created, parameter mutations per branch |
+| **Branch Comparison** | Complexity scores, est. days, bar chart, invariants, side-by-side dimensions (components, risks, API changes, open questions) |
+| **Agent Outputs** | Per-branch, per-role outputs — structured JSON, markdown analysis, cited assumptions, open questions |
+| **Canonical Spec** | The merged result after a decision is recorded, with a download button |
+
+To relaunch the dashboard against an existing database without re-running the pipeline:
+
+```bash
+cd spec-sandbox
+.venv/bin/streamlit run app.py
+```
 
 ---
 

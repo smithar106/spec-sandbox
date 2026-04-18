@@ -34,7 +34,13 @@ else
   echo "  Delete spec_sandbox.db and re-run to start fresh."
 fi
 
-# ── 4. Launch Streamlit ───────────────────────────────────────
+# ── 4. Suppress Streamlit email prompt ───────────────────────
+mkdir -p ~/.streamlit
+if [ ! -f ~/.streamlit/credentials.toml ]; then
+  printf '[general]\nemail = ""\n' > ~/.streamlit/credentials.toml
+fi
+
+# ── 5. Launch Streamlit ───────────────────────────────────────
 echo ""
 echo "══════════════════════════════════════════════════════════"
 echo "  Launching Streamlit at http://localhost:8501"

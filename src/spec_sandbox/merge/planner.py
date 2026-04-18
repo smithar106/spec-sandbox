@@ -233,7 +233,7 @@ class MergePlanner:
         # Match from the heading line to just before the next heading of equal/higher level
         # or end of string.
         heading_hashes = len(re.match(r"^(#+)", heading.strip()).group(1))  # type: ignore[union-attr]
-        higher_or_equal = f"^{{1,{heading_hashes}}}"
+        higher_or_equal = f"{{1,{heading_hashes}}}"
         pattern = re.compile(
             rf"({heading_escaped})\s*\n.*?(?=\n#{higher_or_equal}\s|\Z)",
             re.DOTALL | re.MULTILINE,

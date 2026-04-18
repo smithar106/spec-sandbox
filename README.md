@@ -40,12 +40,27 @@ Writing a spec is easy. Knowing which version of the spec to commit to is hard. 
 ## Getting Started
 
 ```bash
-# Clone and install
-git clone https://github.com/your-org/spec-sandbox
+git clone https://github.com/smithar106/spec-sandbox
 cd spec-sandbox
+bash run.sh
+```
+
+That's it. `run.sh` will:
+1. Create a Python virtual environment
+2. Install all dependencies
+3. Run the full pipeline against the sample spec using a mock LLM (~5 seconds, no API key needed)
+4. Open the Streamlit visualization at **http://localhost:8501**
+
+---
+
+### Manual CLI usage
+
+```bash
+# Set up venv
+python3 -m venv .venv && source .venv/bin/activate
 pip install -e ".[dev]"
 
-# Initialize workspace (creates spec_sandbox.db and config)
+# Initialize workspace (creates spec_sandbox.db)
 spec-sandbox init
 
 # Import a spec from a markdown file
@@ -65,6 +80,9 @@ spec-sandbox choose <spec_id>
 
 # Merge chosen branch parameters into a final canonical spec
 spec-sandbox merge <spec_id>
+
+# Launch the Streamlit UI against the populated database
+streamlit run app.py
 ```
 
 Each command accepts `--help` for detailed usage.
@@ -80,7 +98,7 @@ export ANTHROPIC_API_KEY=sk-ant-...
 spec-sandbox run-agents <spec_id>
 ```
 
-The agent orchestrator uses `claude-3-7-sonnet-20250219` by default. Override with `--model`.
+The agent orchestrator uses `claude-sonnet-4-6` by default. Override with `--model`.
 
 ---
 

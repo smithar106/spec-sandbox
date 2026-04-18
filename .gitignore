@@ -9,4 +9,8 @@ build/
 .mypy_cache/
 .ruff_cache/
 spec_sandbox.db
+demo.db
+demo-canonical-spec.md
 *.db
+*.db-shm
+*.db-wal

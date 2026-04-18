@@ -2,8 +2,10 @@
 import asyncio
 import os
 import sys
+from pathlib import Path
 
-sys.path.insert(0, "src")
+_ROOT = Path(__file__).parent
+sys.path.insert(0, str(_ROOT / "src"))
 
 from spec_sandbox.domain.models import (
     AgentRole, BaseSpec, DecisionRecord, Scenario, ScenarioParameter
@@ -17,14 +19,14 @@ from spec_sandbox.providers.mock_provider import MockProvider
 from spec_sandbox.storage.database import Database
 
 
-SPEC_CONTENT = open("examples/specs/feature-flag-dashboard.md").read()
+SPEC_CONTENT = (_ROOT / "examples/specs/feature-flag-dashboard.md").read_text()
 
 SEP = "─" * 70
 
 
 async def main():
     # ── Setup ──────────────────────────────────────────────────────────
-    db = Database("demo.db")
+    db = Database(str(_ROOT / "spec_sandbox.db"))
     await db.initialize()
 
     spec = BaseSpec(title="Feature Flag Dashboard", content=SPEC_CONTENT)
@@ -214,7 +216,7 @@ async def main():
     print(f"{'═'*70}\n")
 
     await db.close()
-    import os; os.unlink("demo.db") if os.path.exists("demo.db") else None
+    pass  # keep spec_sandbox.db so Streamlit can read it
 
 
 asyncio.run(main())

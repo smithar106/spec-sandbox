@@ -24,7 +24,8 @@ st.set_page_config(
 # ---------------------------------------------------------------------------
 
 import sys
-sys.path.insert(0, str(Path(__file__).parent / "src"))
+_ROOT = Path(__file__).parent
+sys.path.insert(0, str(_ROOT / "src"))
 
 from spec_sandbox.storage.database import Database
 from spec_sandbox.domain.models import (
@@ -33,7 +34,7 @@ from spec_sandbox.domain.models import (
     RunStatus, Scenario, SpecBranch,
 )
 
-DB_PATH = "spec_sandbox.db"
+DB_PATH = str(Path(__file__).parent / "spec_sandbox.db")
 
 
 def _run(coro):

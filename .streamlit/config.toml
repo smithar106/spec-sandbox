@@ -2,4 +2,9 @@
 gatherUsageStats = false
 
 [server]
-headless = false
+headless = true
+maxUploadSize = 50
+enableXsrfProtection = false
+
+[runner]
+fastReruns = true

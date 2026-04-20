@@ -38,11 +38,9 @@ DB_PATH = str(Path(__file__).parent / "spec_sandbox.db")
 
 
 def _run(coro):
-    loop = asyncio.new_event_loop()
-    try:
-        return loop.run_until_complete(coro)
-    finally:
-        loop.close()
+    # asyncio.run() creates a fresh loop each call — safe for Streamlit's
+    # threaded rerun model and avoids "loop is closed" errors after 30s.
+    return asyncio.run(coro)
 
 
 @st.cache_resource
@@ -52,26 +50,32 @@ def get_db():
     return db
 
 
+@st.cache_data(ttl=60)
 def load_specs():
     return _run(get_db().list_base_specs())
 
 
+@st.cache_data(ttl=60)
 def load_branches(spec_id):
     return _run(get_db().list_branches_for_spec(spec_id))
 
 
+@st.cache_data(ttl=60)
 def load_runs(branch_id):
     return _run(get_db().list_runs_for_branch(branch_id))
 
 
+@st.cache_data(ttl=60)
 def load_projections(branch_id):
     return _run(get_db().get_projections_for_branch(branch_id))
 
 
+@st.cache_data(ttl=60)
 def load_scenario(scenario_id):
     return _run(get_db().get_scenario(scenario_id))
 
 
+@st.cache_data(ttl=60)
 def load_latest_revision(spec_id):
     return _run(get_db().get_latest_revision(spec_id))
 
